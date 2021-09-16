@@ -27,4 +27,14 @@ describe('Inbox', () => {
     const message = await inbox.methods.message().call()
     assert.strictEqual(message, 'Initial message')
   })
+
+  it('can change the message', async () => {
+    const tx = await inbox.methods.setMessage('New message')
+      .send({
+        from: accounts[0]
+      })
+    const message = await inbox.methods.message().call()
+    assert.ok(tx.status)
+    assert.strictEqual(message, 'New message')
+  })
 })
