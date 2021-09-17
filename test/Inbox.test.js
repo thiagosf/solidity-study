@@ -15,8 +15,14 @@ describe('Inbox', () => {
     // Use one of those accounts to deploy
     // the contract
     inbox = await new web3.eth.Contract(JSON.parse(interface))
-      .deploy({ data: bytecode, arguments: ['Initial message'] })
-      .send({ from: accounts[0], gas: '1000000' })
+      .deploy({
+        data: bytecode,
+        arguments: ['Initial message']
+      })
+      .send({
+        from: accounts[0],
+        gas: '1000000'
+      })
   })
 
   it('deploys a contract', async () => {
