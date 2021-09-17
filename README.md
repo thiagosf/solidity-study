@@ -1,4 +1,4 @@
-# Solidity Inbox Study
+# Solidity Study
 
 Study of Udemy Solidity Course:
 
