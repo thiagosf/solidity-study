@@ -4,7 +4,7 @@ const Web3 = require('web3')
 const compiler = require('../compile')
 const web3 = new Web3(ganache.provider())
 
-describe('Inbox', () => {
+describe('Inbox Contract', () => {
   let accounts
   let inbox
 
