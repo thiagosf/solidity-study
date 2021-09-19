@@ -5,12 +5,67 @@ import lottery from './lottery';
 import web3 from './web3';
 
 function App() {
+  const [accountIndex, setAccountIndex] = useState<number>(0)
   const [manager, setManager] = useState<string>()
   const [players, setPlayers] = useState<string[]>([])
   const [balance, setBalance] = useState<string>('')
+  const [value, setValue] = useState<string>('')
+  const [isSending, setIsSending] = useState<boolean>(false)
+  const [message, setMessage] = useState<string>('')
+  const [tx, setTx] = useState<any>()
 
-  const onEnter = async () => {
-    console.log('onEnter')
+  const onSubmit = async (event: any) => {
+    event.preventDefault()
+    setIsSending(true)
+    setMessage('Waiting on transaction success...')
+    try {
+      const accounts = await web3.eth.getAccounts()
+      const tx = await lottery.methods.enter().send({
+        from: accounts[accountIndex],
+        value: web3.utils.toWei(value, 'ether'),
+      })
+      setTx(tx)
+      setIsSending(false)
+      setMessage('You have been entered!')
+    } catch (error: any) {
+      setMessage(() => {
+        if (error.message) {
+          return error.message
+        }
+        return 'Unknown error'
+      })
+      setIsSending(false)
+    }
+  }
+
+  const handleChangeInput = (event: any) => {
+    setValue(() => event.target.value)
+  }
+
+  const handleChangeAccount = (event: any) => {
+    setAccountIndex(() => +event.target.value)
+  }
+
+  const onPickWinner = async () => {
+    setIsSending(true)
+    setMessage('Waiting on transaction success...')
+    try {
+      const accounts = await web3.eth.getAccounts()
+      const tx = await lottery.methods.pickWinner().send({
+        from: accounts[accountIndex],
+      })
+      setTx(tx)
+      setIsSending(false)
+      setMessage('A winner has been picked!')
+    } catch (error: any) {
+      setMessage(() => {
+        if (error.message) {
+          return error.message
+        }
+        return 'Unknown error'
+      })
+      setIsSending(false)
+    }
   }
 
   useEffect(() => {
@@ -36,9 +91,57 @@ function App() {
         <h1>Lottery Contract</h1>
         <p>This contract is managed by {manager}</p>
         <p>There are currently {players.length} people entered, competing to win {web3.utils.fromWei(balance, 'ether')} ether!</p>
+        <div>
+          <label className="app__label">Account index</label>
+          <select
+            className="app__input"
+            value={accountIndex}
+            onChange={handleChangeAccount}
+          >
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+          </select>
+        </div>
       </header>
       <main>
-        <Button onClick={onEnter}>Enter</Button>
+        <h4>Want to try your luck?</h4>
+        <form onSubmit={onSubmit}>
+          <div>
+            <label className="app__label">Amount of ether to enter</label>
+            <input
+              className="app__input"
+              type="text"
+              value={value}
+              onChange={handleChangeInput}
+            />
+            <em>eth</em>
+          </div>
+          <Button
+            type="submit"
+            disabled={isSending}
+          >Enter</Button>
+        </form>
+        <hr className="app__separator" />
+        <h4>Ready to pick a winner?</h4>
+        <Button
+          type="button"
+          disabled={isSending}
+          onClick={onPickWinner}
+        >Pick a winner!</Button>
+        <hr className="app__separator" />
+        {message && (
+          <>
+            <br />
+            <h2>{message}</h2>
+          </>
+        )}
+        <hr className="app__separator" />
+        <h3>Tx</h3>
+        <br />
+        <code
+          className="app__code"
+        >{JSON.stringify(tx)}</code>
       </main>
     </div>
   );
