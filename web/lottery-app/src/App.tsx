@@ -18,6 +18,7 @@ function App() {
     event.preventDefault()
     setIsSending(true)
     setMessage('Waiting on transaction success...')
+    setTx('')
     try {
       const accounts = await web3.eth.getAccounts()
       const tx = await lottery.methods.enter().send({
@@ -49,6 +50,7 @@ function App() {
   const onPickWinner = async () => {
     setIsSending(true)
     setMessage('Waiting on transaction success...')
+    setTx('')
     try {
       const accounts = await web3.eth.getAccounts()
       const tx = await lottery.methods.pickWinner().send({
