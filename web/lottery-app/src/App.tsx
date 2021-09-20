@@ -5,7 +5,6 @@ import lottery from './lottery';
 import web3 from './web3';
 
 function App() {
-  const [accountIndex, setAccountIndex] = useState<number>(0)
   const [manager, setManager] = useState<string>()
   const [players, setPlayers] = useState<string[]>([])
   const [balance, setBalance] = useState<string>('')
@@ -22,7 +21,7 @@ function App() {
     try {
       const accounts = await web3.eth.getAccounts()
       const tx = await lottery.methods.enter().send({
-        from: accounts[accountIndex],
+        from: accounts[0],
         value: web3.utils.toWei(value, 'ether'),
       })
       setTx(tx)
@@ -43,10 +42,6 @@ function App() {
     setValue(() => event.target.value)
   }
 
-  const handleChangeAccount = (event: any) => {
-    setAccountIndex(() => +event.target.value)
-  }
-
   const onPickWinner = async () => {
     setIsSending(true)
     setMessage('Waiting on transaction success...')
@@ -54,7 +49,7 @@ function App() {
     try {
       const accounts = await web3.eth.getAccounts()
       const tx = await lottery.methods.pickWinner().send({
-        from: accounts[accountIndex],
+        from: accounts[0],
       })
       setTx(tx)
       setIsSending(false)
@@ -93,18 +88,6 @@ function App() {
         <h1>Lottery Contract</h1>
         <p>This contract is managed by {manager}</p>
         <p>There are currently {players.length} people entered, competing to win {web3.utils.fromWei(balance, 'ether')} ether!</p>
-        <div>
-          <label className="app__label">Account index</label>
-          <select
-            className="app__input"
-            value={accountIndex}
-            onChange={handleChangeAccount}
-          >
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-          </select>
-        </div>
       </header>
       <main>
         <h4>Want to try your luck?</h4>
@@ -126,6 +109,7 @@ function App() {
         </form>
         <hr className="app__separator" />
         <h4>Ready to pick a winner?</h4>
+        <br />
         <Button
           type="button"
           disabled={isSending}
