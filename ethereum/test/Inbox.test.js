@@ -9,7 +9,8 @@ describe('Inbox Contract', () => {
   let inbox
 
   beforeEach(async () => {
-    const { interface, bytecode } = compiler('Inbox')
+    const contracts = await compiler('Inbox')
+    const { interface, bytecode } = contracts[':Inbox']
 
     // Get a list of all accounts
     accounts = await web3.eth.getAccounts()

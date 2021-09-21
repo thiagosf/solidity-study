@@ -4,19 +4,19 @@ Study of Udemy Solidity Course:
 
 [https://www.udemy.com/course/ethereum-and-solidity-the-complete-developers-guide](https://www.udemy.com/course/ethereum-and-solidity-the-complete-developers-guide)
 
-## API
+## Ethereum
 
 ### Install dependencies
 
 ```bash
-cd api
+cd ethereum
 npm ci
 ```
 
 ### Test
 
 ```bash
-cd api
+cd ethereum
 npm test
 ```
 

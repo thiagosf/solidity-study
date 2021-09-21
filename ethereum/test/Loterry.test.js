@@ -9,7 +9,8 @@ describe('Lottery Contract', () => {
   let lottery
 
   beforeEach(async () => {
-    const { interface, bytecode } = compiler('Lottery')
+    const contracts = await compiler('Lottery')
+    const { interface, bytecode } = contracts[':Lottery']
 
     // Get a list of all accounts
     accounts = await web3.eth.getAccounts()
