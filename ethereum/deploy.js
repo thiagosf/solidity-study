@@ -3,12 +3,13 @@ const Web3 = require('web3')
 const config = require('./config')
 const compiler = require('./compile')
 const contract = process.argv[2]
+const contractName = process.argv[3]
+  ? process.argv[3]
+  : contract
 
 const deploy = async () => {
-  await compiler(contract)
-  return false
-
-  const { interface, bytecode } = await compiler(contract)
+  const output = await compiler(contract)
+  const { interface, bytecode } = output[`:${contractName}`]
 
   const provider = new HDWalletProvider(
     config.mnemonic,
@@ -21,9 +22,11 @@ const deploy = async () => {
   const contractArguments = {
     Inbox: ['Initial message'],
     Lottery: [],
+    Campaign: [],
   }
 
-  const result = await new web3.eth.Contract(JSON.parse(interface))
+  const result = await new web3.eth
+    .Contract(JSON.parse(interface))
     .deploy({
       data: bytecode,
       arguments: contractArguments[contract]
@@ -34,10 +37,12 @@ const deploy = async () => {
       gasPrice: '5000000000',
     })
 
+  console.log('--------')
   console.log('Interface:')
   console.log(interface)
   console.log('--------')
-  console.log('Contract deployed to:', result)
+  console.log('Contract deployed to:')
+  console.log(result.options.address)
 }
 
 deploy()
